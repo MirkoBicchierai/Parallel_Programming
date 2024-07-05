@@ -6,14 +6,10 @@
 using namespace std;
 
 vector<Point> kMeans(vector<Point> &data, vector<Point> &centroids, int k, int maxIterations) {
-
     vector<Point> newCentroids = std::vector<Point>(k, Point());
-
     for (int iter = 0; iter < maxIterations; ++iter) {
-
         vector<int> counts(k, 0);
         newCentroids = std::vector<Point>(k, Point());
-
         for (Point &pt: data) {
             double minDistance = distance(pt, centroids[0]);
             pt.actualCentroid = 0;
@@ -27,20 +23,13 @@ vector<Point> kMeans(vector<Point> &data, vector<Point> &centroids, int k, int m
             newCentroids[pt.actualCentroid] += pt;
             counts[pt.actualCentroid]++;
         }
-
         for (int i = 0; i < k; i++) {
             newCentroids[i] /= counts[i];
         }
-
-        /*
-        if (areEqual(centroids, newCentroids)) {
+        if (areEqual(centroids, newCentroids))
             return centroids;
-        }
-        */
-
         centroids = newCentroids;
     }
-
     return centroids;
 }
 

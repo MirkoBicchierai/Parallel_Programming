@@ -139,14 +139,11 @@ Point next_centroid (const std::vector<double> &dist, const std::vector<Point> &
 
 
 std::vector<Point> initialization_kmean_par(const std::vector<Point> &data, const int k, const int t) {
-
     std::vector<Point> centroids;
     centroids.reserve(k);
     std::uniform_int_distribution<> distrib(0, data.size() - 1);
-
     centroids.push_back(data[distrib(gen)]);
     int chunk = ceil(data.size() / t);
-
     while (centroids.size() < k) {
         vector<double> distances_glob(data.size(), numeric_limits<double>::max());
         #pragma omp parallel for schedule(static, chunk) num_threads(t)
@@ -157,18 +154,13 @@ std::vector<Point> initialization_kmean_par(const std::vector<Point> &data, cons
             }
         centroids.push_back(next_centroid(distances_glob, data));
     }
-
     return centroids;
-
 }
 
 std::vector<Point> initialization_kmean_seq(const std::vector<Point> &data, const int k) {
-
     std::vector<Point> centroids;
     std::uniform_int_distribution<> distrib(0, data.size() - 1);
-
     centroids.push_back(data[distrib(gen)]);
-
     while (centroids.size() < k) {
         vector<double> distances_glob(data.size(), numeric_limits<double>::max());
         for (size_t i = 0; i < data.size(); i++) {
@@ -178,7 +170,6 @@ std::vector<Point> initialization_kmean_seq(const std::vector<Point> &data, cons
         }
         centroids.push_back(next_centroid(distances_glob, data));
     }
-
     return centroids;
-
 }
+

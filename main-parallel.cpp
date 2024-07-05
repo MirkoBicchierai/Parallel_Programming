@@ -7,21 +7,16 @@
 using namespace std;
 
 vector<Point> kMeans(vector<Point> &data, vector<Point> &centroids, int k, int maxIterations, int threads) {
-
     int block = ceil(data.size() / threads);
     vector<Point> newCentroids(k, Point());
     vector<int> counts(k, 0);
-
     for (int iter = 0; iter < maxIterations; ++iter) {
-
         newCentroids = vector<Point>(k, Point());
         counts = vector<int>(k, 0);
-
         #pragma omp parallel num_threads(threads)
         {
             vector<int> tmp_counts(k, 0);
             vector<Point> tmp_newCentroids(k, Point());
-
             #pragma omp for nowait schedule(static, block)
             for (Point &pt: data) {
                 double minDistance = distance(pt, centroids[0]);
@@ -36,7 +31,6 @@ vector<Point> kMeans(vector<Point> &data, vector<Point> &centroids, int k, int m
                 tmp_newCentroids[pt.actualCentroid] += pt;
                 tmp_counts[pt.actualCentroid]++;
             }
-
             #pragma omp critical
             {
                 for (int i = 0; i < k; i++) {
@@ -44,23 +38,15 @@ vector<Point> kMeans(vector<Point> &data, vector<Point> &centroids, int k, int m
                     counts[i] += tmp_counts[i];
                 }
             }
-
         }
-
         for (int i = 0; i < k; i++) {
             newCentroids[i] /= counts[i];
         }
-
-        /*
         if (areEqual(centroids, newCentroids)) {
             return centroids;
         }
-        */
-
         centroids = newCentroids;
-
     }
-
     return centroids;
 }
 
